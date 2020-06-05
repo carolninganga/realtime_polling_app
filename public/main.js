@@ -42,4 +42,24 @@ if(charContainer) {
         ]
     });
     chart.render();
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('39b000d159c2b2cf6812', {
+      cluster: 'us2'
+    });
+
+    var channel = pusher.subscribe('os-poll');
+    channel.bind('os-vote', function(data) {
+      dataPoints = dataPoints.map(x => {
+          if(x.label == data.os) {
+              x.y += data.points;
+              return x;
+          } else {
+              return x;
+          }
+      });
+      chart.render();
+    });
 }
